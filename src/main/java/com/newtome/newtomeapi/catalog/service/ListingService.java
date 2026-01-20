@@ -1,6 +1,7 @@
 package com.newtome.newtomeapi.catalog.service;
 
 import com.newtome.newtomeapi.catalog.dto.CreateListingRequest;
+import com.newtome.newtomeapi.catalog.dto.UpdateListingRequest;
 import com.newtome.newtomeapi.catalog.model.Category;
 import com.newtome.newtomeapi.catalog.model.Listing;
 import com.newtome.newtomeapi.catalog.repository.CategoryRepository;
@@ -42,7 +43,7 @@ public class ListingService {
         return listingRepository.findAllByOrderByCreatedAtDesc();
     }
 
-
+//    Add a new listing
     public Listing createListing(CreateListingRequest request) {
         Category category = categoryRepository.findById(request.categoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found: " + request.categoryId()));
@@ -60,5 +61,50 @@ public class ListingService {
 
         return listingRepository.save(listing);
     }
+
+//    Update a Listing with Patch
+    public Listing patchListing(Long listingId, UpdateListingRequest request) {
+        Listing listing = listingRepository.findById(listingId)
+                .orElseThrow(() -> new IllegalArgumentException("Listing not found: " + listingId));
+
+        // Update fields only if they are provided
+        if (request.title() != null && !request.title().isBlank()) {
+            listing.setTitle(request.title());
+        }
+        if (request.description() != null && !request.description().isBlank()) {
+            listing.setDescription(request.description());
+        }
+        if (request.color() != null && !request.color().isBlank()) {
+            listing.setColor(request.color());
+        }
+        if (request.price() != null) {
+            listing.setPrice(request.price());
+        }
+        if (request.city() != null && !request.city().isBlank()) {
+            listing.setCity(request.city());
+        }
+        if (request.status() != null && !request.status().isBlank()) {
+            listing.setStatus(request.status());
+        }
+
+        // Update category if provided
+        if (request.categoryId() != null) {
+            Category category = categoryRepository.findById(request.categoryId())
+                    .orElseThrow(() -> new IllegalArgumentException("Category not found: " + request.categoryId()));
+            listing.setCategory(category);
+        }
+
+        return listingRepository.save(listing);
+    }
+
+
+    //    Delete a Listing
+    public void deleteListing(Long listingId) {
+        if (!listingRepository.existsById(listingId)) {
+            throw new IllegalArgumentException("Listing not found: " + listingId);
+        }
+        listingRepository.deleteById(listingId);
+    }
+
 
 }
