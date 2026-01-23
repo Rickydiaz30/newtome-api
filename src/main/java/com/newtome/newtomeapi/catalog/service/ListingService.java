@@ -54,7 +54,7 @@ public class ListingService {
                 request.color(),
                 request.price(),
                 request.city(),
-                "AVAILABLE",
+                "ACTIVE",
                 Instant.now(),
                 category
         );
