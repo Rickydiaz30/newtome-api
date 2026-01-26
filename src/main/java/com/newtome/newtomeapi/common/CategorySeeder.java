@@ -1,4 +1,4 @@
-package com.newtome.newtomeapi;
+package com.newtome.newtomeapi.common;
 
 import com.newtome.newtomeapi.catalog.model.Category;
 import com.newtome.newtomeapi.catalog.repository.CategoryRepository;
