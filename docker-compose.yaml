@@ -1,7 +1,6 @@
 services:
   db:
     image: mysql:8.0
-    container_name: newtome-mysql
     environment:
       MYSQL_DATABASE: newtome
       MYSQL_ROOT_PASSWORD: root
@@ -17,17 +16,17 @@ services:
 
   api:
     build: .
-    container_name: newtome-api
     depends_on:
       db:
         condition: service_healthy
     ports:
       - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/newtome
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/newtome?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
 
 volumes:
   newtome_mysql_data:
