@@ -16,12 +16,19 @@ public class CategorySeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (categoryRepository.count() == 0) {
-            categoryRepository.save(new Category("Clothing", "Shirts, pants, shoes"));
-            categoryRepository.save(new Category("Appliances", "Small and large appliances"));
-            categoryRepository.save(new Category("Sporting Goods", "Sports and outdoor gear"));
-            categoryRepository.save(new Category("Furniture", "Tables, chairs, couches"));
-            categoryRepository.save(new Category("Tools", "Hand tools and power tools"));
+
+        seed("Clothing", "Shirts, pants, shoes");
+        seed("Appliances", "Small and large appliances");
+        seed("Sporting Goods", "Sports and outdoor gear");
+        seed("Furniture", "Tables, chairs, couches");
+        seed("Tools", "Hand tools and power tools");
+        seed("Electronics", "Tv's, Sound Systems, etc...");
+    }
+
+    private void seed(String name, String description) {
+        if (!categoryRepository.existsByName(name)) {
+            categoryRepository.save(new Category(name, description));
         }
     }
+
 }

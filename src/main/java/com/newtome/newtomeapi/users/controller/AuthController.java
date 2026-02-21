@@ -77,13 +77,13 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("message", "Email already in use."));
         }
 
-        User user = new User(
-                req.getFullName().trim(),
-                normalizedEmail,
-                passwordEncoder.encode(req.getPassword()),
-                req.getPhone() == null ? null : req.getPhone().trim()
-        );
+        User user = new User();
 
+        user.setFirstName(req.getFirstName().trim());
+        user.setLastName(req.getLastName().trim());
+        user.setEmail(normalizedEmail);
+        user.setPasswordHash(passwordEncoder.encode(req.getPassword()));
+        user.setPhone(req.getPhone() == null ? null : req.getPhone().trim());
         User saved = userRepository.save(user);
 
         return ResponseEntity

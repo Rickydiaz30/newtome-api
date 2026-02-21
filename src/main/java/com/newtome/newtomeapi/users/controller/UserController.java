@@ -38,7 +38,8 @@ public class UserController {
 
         return ResponseEntity.ok(new UserMeResponse(
                 user.getId(),
-                user.getFullName(),
+                user.getFirstName(),
+                user.getLastName(),
                 user.getEmail(),
                 user.getPhone()
         ));

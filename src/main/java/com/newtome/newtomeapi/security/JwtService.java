@@ -10,7 +10,6 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
-import java.util.Map;
 
 @Service
 public class JwtService {
@@ -20,7 +19,7 @@ public class JwtService {
 
     public JwtService(
             @Value("${app.jwt.secret}") String secret,
-            @Value("${app.jwt.exp-minutes:60}") int expMinutes
+            @Value("${app.jwt.exp-minutes}") int expMinutes
     ) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expMinutes = expMinutes;
@@ -30,14 +29,8 @@ public class JwtService {
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(expMinutes * 60L);
 
-        Map<String, Object> claims = Map.of(
-                "email", user.getEmail(),
-                "fullName", user.getFullName()
-        );
-
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(user.getEmail())
+                .setSubject(user.getEmail()) // identity
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(exp))
                 .signWith(key)
