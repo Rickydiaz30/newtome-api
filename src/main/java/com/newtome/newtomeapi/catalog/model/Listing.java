@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
+@Table(name = "listings")
 public class Listing {
 
     @Id
@@ -18,13 +19,15 @@ public class Listing {
     private String city;
     private String status;
     private Instant createdAt;
+    private String imageUrl;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
     public Listing(){}
 
-    public Listing(String title, String description, String color, BigDecimal price, String city, String status, Instant createdAt, Category category) {
+    public Listing(String title, String description, String color, BigDecimal price, String city, String status, Instant createdAt, String imageUrl, Category category) {
         this.title = title;
         this.description = description;
         this.color = color;
@@ -32,6 +35,7 @@ public class Listing {
         this.city = city;
         this.status = status;
         this.createdAt = createdAt;
+        this.imageUrl = imageUrl;
         this.category = category;
     }
 
@@ -99,6 +103,14 @@ public class Listing {
         this.createdAt = createdAt;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public Category getCategory() {
         return category;
     }
@@ -118,8 +130,8 @@ public class Listing {
                 ", city='" + city + '\'' +
                 ", status='" + status + '\'' +
                 ", createdAt=" + createdAt +
-                ", categoryId=" + (category != null ? category.getId() : null) +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", category=" + category +
                 '}';
     }
-
 }

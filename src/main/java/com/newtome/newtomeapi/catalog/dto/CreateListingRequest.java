@@ -8,5 +8,6 @@ public record CreateListingRequest(
         String color,
         BigDecimal price,
         String city,
-        Long categoryId
+        Long categoryId,
+        String imageUrl
 ) {}

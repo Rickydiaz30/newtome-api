@@ -48,16 +48,17 @@ public class ListingService {
         Category category = categoryRepository.findById(request.categoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found: " + request.categoryId()));
 
-        Listing listing = new Listing(
-                request.title(),
-                request.description(),
-                request.color(),
-                request.price(),
-                request.city(),
-                "ACTIVE",
-                Instant.now(),
-                category
-        );
+        Listing listing = new Listing();
+
+        listing.setTitle(request.title());
+        listing.setDescription(request.description());
+        listing.setColor(request.color());
+        listing.setPrice(request.price());
+        listing.setCity(request.city());
+        listing.setStatus("ACTIVE");
+        listing.setCreatedAt(Instant.now());
+        listing.setImageUrl(request.imageUrl());   // 👈 ADD THIS
+        listing.setCategory(category);
 
         return listingRepository.save(listing);
     }
