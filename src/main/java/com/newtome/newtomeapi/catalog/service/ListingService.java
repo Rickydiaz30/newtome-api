@@ -1,11 +1,13 @@
 package com.newtome.newtomeapi.catalog.service;
 
 import com.newtome.newtomeapi.catalog.dto.CreateListingRequest;
+import com.newtome.newtomeapi.catalog.dto.ListingResponse;
 import com.newtome.newtomeapi.catalog.dto.UpdateListingRequest;
 import com.newtome.newtomeapi.catalog.model.Category;
 import com.newtome.newtomeapi.catalog.model.Listing;
 import com.newtome.newtomeapi.catalog.repository.CategoryRepository;
 import com.newtome.newtomeapi.catalog.repository.ListingRepository;
+import com.newtome.newtomeapi.users.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -16,55 +18,48 @@ public class ListingService {
 
     private final ListingRepository listingRepository;
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
 
-    public ListingService(ListingRepository listingRepository, CategoryRepository categoryRepository) {
+    public ListingService(ListingRepository listingRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
         this.listingRepository = listingRepository;
         this.categoryRepository = categoryRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Listing> getAllListings() {
         return listingRepository.findAll();
     }
 
-    public List<Listing> search(Long categoryId, String city, String color, String query) {
+    public List<ListingResponse> search(Long categoryId, String city, String color, String query) {
+
+        List<Listing> listings;
+
         if (categoryId != null) {
-            return listingRepository.findByCategoryIdOrderByCreatedAtDesc(categoryId);
+            listings = listingRepository.findByCategoryIdOrderByCreatedAtDesc(categoryId);
         }
-        if (city != null && !city.isBlank()) {
-            return listingRepository.findByCityIgnoreCaseOrderByCreatedAtDesc(city);
+        else if (city != null && !city.isBlank()) {
+            listings = listingRepository.findByCityIgnoreCaseOrderByCreatedAtDesc(city);
         }
-        if (color != null && !color.isBlank()) {
-            return listingRepository.findByColorIgnoreCaseOrderByCreatedAtDesc(color);
+        else if (color != null && !color.isBlank()) {
+            listings = listingRepository.findByColorIgnoreCaseOrderByCreatedAtDesc(color);
         }
-        if (query != null && !query.isBlank()) {
-            return listingRepository
+        else if (query != null && !query.isBlank()) {
+            listings = listingRepository
                     .findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByCreatedAtDesc(query, query);
         }
-        return listingRepository.findAllByOrderByCreatedAtDesc();
+        else {
+            listings = listingRepository.findAllByOrderByCreatedAtDesc();
+        }
+
+        return listings
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
-//    Add a new listing
-    public Listing createListing(CreateListingRequest request) {
-        Category category = categoryRepository.findById(request.categoryId())
-                .orElseThrow(() -> new IllegalArgumentException("Category not found: " + request.categoryId()));
-
-        Listing listing = new Listing();
-
-        listing.setTitle(request.title());
-        listing.setDescription(request.description());
-        listing.setColor(request.color());
-        listing.setPrice(request.price());
-        listing.setCity(request.city());
-        listing.setStatus("ACTIVE");
-        listing.setCreatedAt(Instant.now());
-        listing.setImageUrl(request.imageUrl());   // 👈 ADD THIS
-        listing.setCategory(category);
-
-        return listingRepository.save(listing);
-    }
 
 //    Update a Listing with Patch
-    public Listing patchListing(Long listingId, UpdateListingRequest request) {
+    public ListingResponse patchListing(Long listingId, UpdateListingRequest request) {
         Listing listing = listingRepository.findById(listingId)
                 .orElseThrow(() -> new IllegalArgumentException("Listing not found: " + listingId));
 
@@ -95,7 +90,8 @@ public class ListingService {
             listing.setCategory(category);
         }
 
-        return listingRepository.save(listing);
+        Listing saved = listingRepository.save(listing);
+        return toResponse(saved);
     }
 
 
@@ -107,5 +103,48 @@ public class ListingService {
         listingRepository.deleteById(listingId);
     }
 
+    public ListingResponse createListing(CreateListingRequest request, String email) {
+
+        Category category = categoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Category not found: " + request.categoryId()));
+
+        var user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
+
+        Listing listing = new Listing();
+
+        listing.setTitle(request.title());
+        listing.setDescription(request.description());
+        listing.setColor(request.color());
+        listing.setPrice(request.price());
+        listing.setCity(request.city());
+        listing.setStatus("ACTIVE");
+        listing.setCreatedAt(Instant.now());
+        listing.setImageUrl(request.imageUrl());
+        listing.setCategory(category);
+
+        listing.setOwner(user);   // 👈 THIS IS THE IMPORTANT LINE
+
+        Listing saved = listingRepository.save(listing);
+        return toResponse(saved);
+    }
+
+    private ListingResponse toResponse(Listing listing) {
+        return new ListingResponse(
+                listing.getId(),
+                listing.getTitle(),
+                listing.getDescription(),
+                listing.getColor(),
+                listing.getPrice(),
+                listing.getCity(),
+                listing.getStatus(),
+                listing.getCreatedAt(),
+                listing.getImageUrl(),
+                listing.getCategory().getId(),
+                listing.getCategory().getName(),
+                listing.getOwner().getId(),
+                listing.getOwner().getFirstName()
+        );
+    }
 
 }

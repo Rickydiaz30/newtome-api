@@ -1,9 +1,10 @@
 package com.newtome.newtomeapi.catalog.controller;
 
 import com.newtome.newtomeapi.catalog.dto.CreateListingRequest;
+import com.newtome.newtomeapi.catalog.dto.ListingResponse;
 import com.newtome.newtomeapi.catalog.dto.UpdateListingRequest;
-import com.newtome.newtomeapi.catalog.model.Listing;
 import com.newtome.newtomeapi.catalog.service.ListingService;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class ListingController {
 
 //    Get all Listings
     @GetMapping
-    public List<Listing> getListings(
+    public List<ListingResponse> getListings(
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String color,
@@ -29,15 +30,19 @@ public class ListingController {
         return listingService.search(categoryId, city, color, query);
     }
 
-//    Add a Listing
+    //    Add a Listing
     @PostMapping
-    public Listing createListing(@RequestBody CreateListingRequest request) {
-        return listingService.createListing(request);
+    public ListingResponse createListing(
+            @RequestBody CreateListingRequest request,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
+        return listingService.createListing(request, email);
     }
 
 //    Update a Listing
     @PatchMapping("/{id}")
-    public Listing patchListing(@PathVariable Long id, @RequestBody UpdateListingRequest request) {
+    public ListingResponse patchListing(@PathVariable Long id, @RequestBody UpdateListingRequest request) {
         return listingService.patchListing(id, request);
     }
 

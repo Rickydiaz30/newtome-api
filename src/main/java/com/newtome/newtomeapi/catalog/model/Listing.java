@@ -1,9 +1,11 @@
 package com.newtome.newtomeapi.catalog.model;
 
+import com.newtome.newtomeapi.users.model.User;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "listings")
@@ -24,6 +26,13 @@ public class Listing {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
+
+    @OneToMany(mappedBy = "listing")
+    private List<Offer> offers;
 
     public Listing(){}
 
@@ -117,6 +126,14 @@ public class Listing {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     @Override
