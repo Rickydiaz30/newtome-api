@@ -30,6 +30,13 @@ public class ListingController {
         return listingService.search(categoryId, city, color, query);
     }
 
+    //    Get my listings
+    @GetMapping("/mine")
+    public List<ListingResponse> getMyListings(Authentication authentication) {
+        String email = authentication.getName();
+        return listingService.getMyListings(email);
+    }
+
     //    Add a Listing
     @PostMapping
     public ListingResponse createListing(

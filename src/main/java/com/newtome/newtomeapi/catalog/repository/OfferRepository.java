@@ -12,4 +12,6 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
     List<Offer> findByBuyerId(Long buyerId);
 
     List<Offer> findByListingIdOrderByCreatedAtDesc(Long listingId);
+
+    List<Offer> findByBuyerIdOrderByCreatedAtDesc(Long buyerId);
 }

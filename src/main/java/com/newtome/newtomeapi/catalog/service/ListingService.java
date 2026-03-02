@@ -94,6 +94,17 @@ public class ListingService {
         return toResponse(saved);
     }
 
+//    Get my listings
+    public List<ListingResponse> getMyListings(String email) {
+        var user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
+
+        return listingRepository.findByOwnerIdOrderByCreatedAtDesc(user.getId())
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
 
     //    Delete a Listing
     public void deleteListing(Long listingId) {

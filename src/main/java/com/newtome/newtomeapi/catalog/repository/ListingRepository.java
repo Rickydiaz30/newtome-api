@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface ListingRepository extends JpaRepository<Listing, Long> {
 
+    List<Listing> findByOwnerIdOrderByCreatedAtDesc(Long ownerId);
+
     List<Listing> findAllByOrderByCreatedAtDesc();
 
     List<Listing> findByCategoryIdOrderByCreatedAtDesc(Long categoryId);

@@ -87,7 +87,8 @@ public class OfferService {
                 offer.getListing().getId(),
                 offer.getListing().getTitle(),
                 offer.getBuyer().getId(),
-                offer.getBuyer().getFirstName()
+                offer.getBuyer().getFirstName(),
+                offer.getListing().getImageUrl()
         );
     }
 
@@ -148,5 +149,40 @@ public class OfferService {
         listingRepository.save(listing);
 
         return toResponse(offerToAccept);
+    }
+
+    public List<OfferResponse> getMyOffers(String email) {
+        var user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
+
+        return offerRepository.findByBuyerIdOrderByCreatedAtDesc(user.getId())
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public OfferResponse cancelOffer(Long offerId, String email) {
+
+        var offer = offerRepository.findById(offerId)
+                .orElseThrow(() -> new IllegalArgumentException("Offer not found: " + offerId));
+
+        var user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
+
+        // Only buyer can cancel
+        if (!offer.getBuyer().getId().equals(user.getId())) {
+            throw new IllegalStateException("You are not allowed to cancel this offer.");
+        }
+
+        // Only pending offers can be cancelled
+        if (!"PENDING".equals(offer.getStatus())) {
+            throw new IllegalStateException("Only pending offers can be cancelled.");
+        }
+
+        offer.setStatus("CANCELLED");
+
+        Offer saved = offerRepository.save(offer);
+
+        return toResponse(saved);
     }
 }

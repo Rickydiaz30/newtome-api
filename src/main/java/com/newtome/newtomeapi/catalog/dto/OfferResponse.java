@@ -12,5 +12,6 @@ public record OfferResponse(
         Long listingId,
         String listingTitle,
         Long buyerId,
-        String buyerFirstName
+        String buyerFirstName,
+        String listingImageUrl
 ) {}
