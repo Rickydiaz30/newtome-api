@@ -72,9 +72,18 @@ public class AuthController {
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest req) {
 
         String normalizedEmail = req.getEmail().trim().toLowerCase();
+        String normalizedUsername = req.getUsername().trim().toLowerCase();
 
         if (userRepository.existsByEmail(normalizedEmail)) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Email already in use."));
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("message", "Email already in use."));
+        }
+
+        if (userRepository.existsByUsername(normalizedUsername)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("message", "Username already taken."));
         }
 
         User user = new User();
@@ -82,8 +91,10 @@ public class AuthController {
         user.setFirstName(req.getFirstName().trim());
         user.setLastName(req.getLastName().trim());
         user.setEmail(normalizedEmail);
+        user.setUsername(normalizedUsername);   // ✅ ADD THIS
         user.setPasswordHash(passwordEncoder.encode(req.getPassword()));
         user.setPhone(req.getPhone() == null ? null : req.getPhone().trim());
+
         User saved = userRepository.save(user);
 
         return ResponseEntity
@@ -94,20 +105,25 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
 
-        String normalizedEmail = req.getEmail().trim().toLowerCase();
+        String normalizedUsername = req.getUsername().trim().toLowerCase();
 
-        User user = userRepository.findByEmail(normalizedEmail)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
+        User user = userRepository
+                .findByUsernameIgnoreCase(normalizedUsername)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials")
+                );
 
-        boolean matches = passwordEncoder.matches(req.getPassword(), user.getPasswordHash());
+        boolean matches = passwordEncoder.matches(
+                req.getPassword(),
+                user.getPasswordHash()
+        );
 
         if (!matches) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
 
-        // ✅ Generate JWT and return it
+        // Generate JWT using username as identity
         String token = jwtService.generateToken(user);
-
 
         return ResponseEntity.ok(Map.of(
                 "message", "Login ok",

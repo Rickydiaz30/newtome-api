@@ -27,9 +27,10 @@ public class UserController {
             return ResponseEntity.status(401).body("Not authenticated");
         }
 
-        String email = authentication.getPrincipal().toString();
+        String username = authentication.getName();  // ✅ use this
 
-        var user = userRepository.findByEmail(email)
+        var user = userRepository
+                .findByUsernameIgnoreCase(username)
                 .orElse(null);
 
         if (user == null) {
@@ -40,6 +41,7 @@ public class UserController {
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
+                user.getUsername(),
                 user.getEmail(),
                 user.getPhone()
         ));

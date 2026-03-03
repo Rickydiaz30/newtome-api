@@ -15,6 +15,10 @@ public class RegisterRequest {
     private String lastName;
 
     @NotBlank
+    @Size(min = 3, max = 30)
+    private String username;
+
+    @NotBlank
     @Email
     @Size(max = 190)
     private String email;
@@ -31,6 +35,14 @@ public class RegisterRequest {
 
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public @NotBlank @Size(min = 3, max = 30) String getUsername() {
+        return username;
+    }
+
+    public void setUsername(@NotBlank @Size(min = 3, max = 30) String username) {
+        this.username = username;
+    }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

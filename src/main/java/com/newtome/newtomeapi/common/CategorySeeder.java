@@ -22,7 +22,16 @@ public class CategorySeeder implements CommandLineRunner {
         seed("Sporting Goods", "Sports and outdoor gear");
         seed("Furniture", "Tables, chairs, couches");
         seed("Tools", "Hand tools and power tools");
-        seed("Electronics", "Tv's, Sound Systems, etc...");
+        seed("Electronics", "TV's, sound systems, etc...");
+        seed("Musical Instruments", "Guitars, amps, drums, keyboards, and other music equipment");
+        seed("Automotive", "Cars, trucks, parts, and accessories");
+        seed("Books", "Fiction, non-fiction, textbooks");
+        seed("Toys & Games", "Board games, kids toys, collectibles");
+        seed("Home & Garden", "Outdoor furniture, plants, decor");
+        seed("Baby & Kids", "Strollers, cribs, baby gear");
+        seed("Health & Fitness", "Gym equipment, supplements, wellness items");
+        seed("Office Supplies", "Desks, chairs, office electronics");
+        seed("Pet Supplies", "Food, cages, accessories");
     }
 
     private void seed(String name, String description) {

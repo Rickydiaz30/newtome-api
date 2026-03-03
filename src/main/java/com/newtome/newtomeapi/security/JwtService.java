@@ -30,7 +30,7 @@ public class JwtService {
         Instant exp = now.plusSeconds(expMinutes * 60L);
 
         return Jwts.builder()
-                .setSubject(user.getEmail()) // identity
+                .setSubject(user.getUsername()) // identity
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(exp))
                 .signWith(key)

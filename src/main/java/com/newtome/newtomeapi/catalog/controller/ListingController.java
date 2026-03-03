@@ -33,8 +33,8 @@ public class ListingController {
     //    Get my listings
     @GetMapping("/mine")
     public List<ListingResponse> getMyListings(Authentication authentication) {
-        String email = authentication.getName();
-        return listingService.getMyListings(email);
+        String username = authentication.getName();
+        return listingService.getMyListings(username);
     }
 
     //    Add a Listing
@@ -43,8 +43,8 @@ public class ListingController {
             @RequestBody CreateListingRequest request,
             Authentication authentication
     ) {
-        String email = authentication.getName();
-        return listingService.createListing(request, email);
+        String username = authentication.getName();
+        return listingService.createListing(request, username);
     }
 
 //    Update a Listing

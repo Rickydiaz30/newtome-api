@@ -1,13 +1,15 @@
 package com.newtome.newtomeapi.catalog.service;
-import org.springframework.transaction.annotation.Transactional;
+
 import com.newtome.newtomeapi.catalog.dto.CreateOfferRequest;
 import com.newtome.newtomeapi.catalog.dto.OfferResponse;
 import com.newtome.newtomeapi.catalog.model.Listing;
 import com.newtome.newtomeapi.catalog.model.Offer;
 import com.newtome.newtomeapi.catalog.repository.ListingRepository;
 import com.newtome.newtomeapi.catalog.repository.OfferRepository;
+import com.newtome.newtomeapi.users.model.User;
 import com.newtome.newtomeapi.users.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -32,7 +34,7 @@ public class OfferService {
     public OfferResponse createOffer(
             Long listingId,
             CreateOfferRequest request,
-            String buyerEmail
+            String username
     ) {
 
         // 1️⃣ Find listing
@@ -45,8 +47,8 @@ public class OfferService {
         }
 
         // 3️⃣ Find buyer
-        var buyer = userRepository.findByEmail(buyerEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + buyerEmail));
+        var buyer = userRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
 
         // 4️⃣ Buyer cannot offer on own listing
         if (listing.getOwner().getId().equals(buyer.getId())) {
@@ -92,12 +94,12 @@ public class OfferService {
         );
     }
 
-    public List<OfferResponse> getOffersForListing(Long listingId, String email) {
+    public List<OfferResponse> getOffersForListing(Long listingId, String username) {
 
         Listing listing = listingRepository.findById(listingId)
                 .orElseThrow(() -> new IllegalArgumentException("Listing not found"));
 
-        if (!listing.getOwner().getEmail().equals(email)) {
+        if (!listing.getOwner().getUsername().equalsIgnoreCase(username)) {
             throw new IllegalStateException("You are not the owner of this listing.");
         }
 
@@ -112,12 +114,12 @@ public class OfferService {
     @Transactional
     public OfferResponse acceptOffer(Long listingId,
                                      Long offerId,
-                                     String email) {
+                                     String username) {
 
         Listing listing = listingRepository.findById(listingId)
                 .orElseThrow(() -> new IllegalArgumentException("Listing not found"));
 
-        if (!listing.getOwner().getEmail().equals(email)) {
+        if (!listing.getOwner().getUsername().equalsIgnoreCase(username)) {
             throw new IllegalStateException("You are not the owner of this listing.");
         }
 
@@ -127,11 +129,6 @@ public class OfferService {
         if (!offerToAccept.getListing().getId().equals(listingId)) {
             throw new IllegalStateException("Offer does not belong to this listing.");
         }
-
-        if (!listing.getOwner().getEmail().equals(email)) {
-            throw new IllegalStateException("You are not the owner of this listing.");
-        }
-
 
         offerToAccept.setStatus("ACCEPTED");
 
@@ -151,9 +148,12 @@ public class OfferService {
         return toResponse(offerToAccept);
     }
 
-    public List<OfferResponse> getMyOffers(String email) {
-        var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
+
+
+    public List<OfferResponse> getMyOffers(String username) {
+
+        var user = userRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
 
         return offerRepository.findByBuyerIdOrderByCreatedAtDesc(user.getId())
                 .stream()
@@ -161,20 +161,20 @@ public class OfferService {
                 .toList();
     }
 
-    public OfferResponse cancelOffer(Long offerId, String email) {
+
+
+    public OfferResponse cancelOffer(Long offerId, String username) {
 
         var offer = offerRepository.findById(offerId)
                 .orElseThrow(() -> new IllegalArgumentException("Offer not found: " + offerId));
 
-        var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
+        var user = userRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
 
-        // Only buyer can cancel
         if (!offer.getBuyer().getId().equals(user.getId())) {
             throw new IllegalStateException("You are not allowed to cancel this offer.");
         }
 
-        // Only pending offers can be cancelled
         if (!"PENDING".equals(offer.getStatus())) {
             throw new IllegalStateException("Only pending offers can be cancelled.");
         }
@@ -184,5 +184,16 @@ public class OfferService {
         Offer saved = offerRepository.save(offer);
 
         return toResponse(saved);
+    }
+
+    public List<OfferResponse> getOffersReceived(String username) {
+        User user = userRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return offerRepository
+                .findByListingOwnerIdOrderByCreatedAtDesc(user.getId())
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 }

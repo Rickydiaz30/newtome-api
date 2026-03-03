@@ -16,10 +16,13 @@ import java.util.List;
 @Service
 public class ListingService {
 
+// These are field declarations. This isn't injecting anything. This is just saying this class
+//    will have a listing, category, and user dependencies.
     private final ListingRepository listingRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
 
+// This is a constructor that spring will use to create the ListingService bean.
     public ListingService(ListingRepository listingRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
         this.listingRepository = listingRepository;
         this.categoryRepository = categoryRepository;
@@ -94,10 +97,11 @@ public class ListingService {
         return toResponse(saved);
     }
 
-//    Get my listings
-    public List<ListingResponse> getMyListings(String email) {
-        var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
+    // Get my listings
+    public List<ListingResponse> getMyListings(String username) {
+
+        var user = userRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
 
         return listingRepository.findByOwnerIdOrderByCreatedAtDesc(user.getId())
                 .stream()
@@ -114,13 +118,14 @@ public class ListingService {
         listingRepository.deleteById(listingId);
     }
 
-    public ListingResponse createListing(CreateListingRequest request, String email) {
+    // Create a listing
+    public ListingResponse createListing(CreateListingRequest request, String username) {
 
         Category category = categoryRepository.findById(request.categoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found: " + request.categoryId()));
 
-        var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
+        var user = userRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
 
         Listing listing = new Listing();
 
@@ -134,7 +139,7 @@ public class ListingService {
         listing.setImageUrl(request.imageUrl());
         listing.setCategory(category);
 
-        listing.setOwner(user);   // 👈 THIS IS THE IMPORTANT LINE
+        listing.setOwner(user);
 
         Listing saved = listingRepository.save(listing);
         return toResponse(saved);

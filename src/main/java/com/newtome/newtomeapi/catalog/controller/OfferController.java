@@ -23,9 +23,15 @@ public class OfferController {
             @PathVariable Long listingId,
             Authentication authentication
     ) {
-        String email = authentication.getName();
-        return offerService.getOffersForListing(listingId, email);
+        String username = authentication.getName();
+        return offerService.getOffersForListing(listingId, username);
     }
+
+//    @GetMapping("/received")
+//    public List<OfferResponse> getOffersReceived(Authentication authentication) {
+//        String username = authentication.getName();
+//        return offerService.getOffersReceived(username);
+//    }
 
     @PostMapping
     public OfferResponse createOffer(

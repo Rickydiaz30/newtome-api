@@ -21,7 +21,10 @@ public class User {
     @Column(nullable = false, length = 120)
     private String lastName;
 
-    @Column(nullable = false, length = 190)
+    @Column(nullable = false, length = 120, unique = true)
+    private String username;
+
+    @Column(nullable = false, length = 190, unique = true)
     private String email;
 
     @Column(nullable = false, length = 255)
@@ -33,10 +36,11 @@ public class User {
     // Constructors
     public User() {}
 
-    public User(String firstName, String lastName, String email, String passwordHash, String phone) {
+    public User(String firstName, String lastName, String userName, String email, String passwordHash, String phone) {
 
         this.firstName = firstName;
         this.lastName = lastName;
+        this.username = userName;
         this.email = email;
         this.passwordHash = passwordHash;
         this.phone = phone;
@@ -50,6 +54,9 @@ public class User {
 
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

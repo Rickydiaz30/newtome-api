@@ -19,8 +19,14 @@ public class OffersController {
 
     @GetMapping("/mine")
     public List<OfferResponse> getMyOffers(Authentication authentication) {
-        String email = authentication.getName();
-        return offerService.getMyOffers(email);
+        String username = authentication.getName();
+        return offerService.getMyOffers(username);
+    }
+
+    @GetMapping("/received")
+    public List<OfferResponse> getOffersReceived(Authentication authentication) {
+        String username = authentication.getName();
+        return offerService.getOffersReceived(username);
     }
 
     @PatchMapping("/{offerId}/cancel")
@@ -28,7 +34,7 @@ public class OffersController {
             @PathVariable Long offerId,
             Authentication authentication
     ) {
-        String email = authentication.getName();
-        return offerService.cancelOffer(offerId, email);
+        String username = authentication.getName();
+        return offerService.cancelOffer(offerId, username);
     }
 }
