@@ -29,10 +29,6 @@ public class ListingService {
         this.userRepository = userRepository;
     }
 
-    public List<Listing> getAllListings() {
-        return listingRepository.findAll();
-    }
-
     public List<ListingResponse> search(Long categoryId, String city, String color, String query) {
 
         List<Listing> listings;
@@ -51,7 +47,7 @@ public class ListingService {
                     .findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByCreatedAtDesc(query, query);
         }
         else {
-            listings = listingRepository.findAllByOrderByCreatedAtDesc();
+            listings = listingRepository.findMarketplaceListings();
         }
 
         return listings
@@ -80,7 +76,7 @@ public class ListingService {
             listing.setPrice(request.price());
         }
         if (request.city() != null && !request.city().isBlank()) {
-            listing.setCity(request.city());
+            listing.setCity(capitalizeCity(request.city()));
         }
         if (request.status() != null && !request.status().isBlank()) {
             listing.setStatus(request.status());
@@ -133,7 +129,7 @@ public class ListingService {
         listing.setDescription(request.description());
         listing.setColor(request.color());
         listing.setPrice(request.price());
-        listing.setCity(request.city());
+        listing.setCity(capitalizeCity(request.city()));
         listing.setStatus("ACTIVE");
         listing.setCreatedAt(Instant.now());
         listing.setImageUrl(request.imageUrl());
@@ -163,4 +159,8 @@ public class ListingService {
         );
     }
 
+    private String capitalizeCity(String city) {
+        if (city == null || city.isBlank()) return city;
+        return city.substring(0,1).toUpperCase() + city.substring(1).toLowerCase();
+    }
 }

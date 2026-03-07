@@ -30,6 +30,11 @@ public class ListingController {
         return listingService.search(categoryId, city, color, query);
     }
 
+    @GetMapping("/search")
+    public List<ListingResponse> searchListings(@RequestParam String query) {
+        return listingService.search(null, null, null, query);
+    }
+
     //    Get my listings
     @GetMapping("/mine")
     public List<ListingResponse> getMyListings(Authentication authentication) {
