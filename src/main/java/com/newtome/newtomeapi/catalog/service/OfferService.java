@@ -196,4 +196,16 @@ public class OfferService {
                 .map(this::toResponse)
                 .toList();
     }
+
+    public OfferResponse rejectOffer(Long listingId, Long offerId, String email) {
+
+        Offer offer = offerRepository.findById(offerId)
+                .orElseThrow(() -> new RuntimeException("Offer not found"));
+
+        offer.setStatus("REJECTED");
+
+        offerRepository.save(offer);
+
+        return toResponse(offer);
+    }
 }

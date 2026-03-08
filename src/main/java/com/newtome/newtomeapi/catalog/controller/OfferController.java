@@ -52,4 +52,14 @@ public class OfferController {
         String email = authentication.getName();
         return offerService.acceptOffer(listingId, offerId, email);
     }
+
+    @PostMapping("/{offerId}/reject")
+    public OfferResponse rejectOffer(
+            @PathVariable Long listingId,
+            @PathVariable Long offerId,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
+        return offerService.rejectOffer(listingId, offerId, email);
+    }
 }
