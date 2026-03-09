@@ -1,5 +1,6 @@
 package com.newtome.newtomeapi.catalog.service;
-import com.newtome.newtomeapi.catalog.model.Category;
+
+import com.newtome.newtomeapi.catalog.dto.CategoryResponse;
 import com.newtome.newtomeapi.catalog.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,10 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryResponse> getAllCategories() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(c -> new CategoryResponse(c.getId(), c.getName()))
+                .toList();
     }
 }

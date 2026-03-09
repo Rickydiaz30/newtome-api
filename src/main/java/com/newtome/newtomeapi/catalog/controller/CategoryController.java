@@ -1,7 +1,8 @@
 package com.newtome.newtomeapi.catalog.controller;
 
-import com.newtome.newtomeapi.catalog.model.Category;
+import com.newtome.newtomeapi.catalog.dto.CategoryResponse;
 import com.newtome.newtomeapi.catalog.service.CategoryService;
+import com.newtome.newtomeapi.common.ApiResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,7 +20,12 @@ public class CategoryController {
     }
 
     @GetMapping
-    public List<Category> getAllCategories() {
-        return categoryService.getAllCategories();
+    public ApiResponse<List<CategoryResponse>> getAllCategories() {
+
+        List<CategoryResponse> categories = categoryService.getAllCategories();
+
+        return new ApiResponse<>(true, "Categories loaded", categories);
     }
+
+
 }

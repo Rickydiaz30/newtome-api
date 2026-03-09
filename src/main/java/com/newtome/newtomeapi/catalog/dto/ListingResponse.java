@@ -17,4 +17,6 @@ public record ListingResponse(
         String categoryName,
         Long ownerId,
         String ownerFirstName
-) {}
+) {
+
+}

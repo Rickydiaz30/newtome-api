@@ -4,6 +4,9 @@ import com.newtome.newtomeapi.catalog.dto.CreateListingRequest;
 import com.newtome.newtomeapi.catalog.dto.ListingResponse;
 import com.newtome.newtomeapi.catalog.dto.UpdateListingRequest;
 import com.newtome.newtomeapi.catalog.service.ListingService;
+import com.newtome.newtomeapi.common.ApiResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,32 +40,50 @@ public class ListingController {
 
     //    Get my listings
     @GetMapping("/mine")
-    public List<ListingResponse> getMyListings(Authentication authentication) {
+    public ApiResponse<List<ListingResponse>> getMyListings(Authentication authentication) {
         String username = authentication.getName();
-        return listingService.getMyListings(username);
+        List<ListingResponse> listings = listingService.getMyListings(username);
+        return new ApiResponse<>(true, "Listings Loaded", listings);
     }
 
     //    Add a Listing
     @PostMapping
-    public ListingResponse createListing(
+    public ResponseEntity<ApiResponse<ListingResponse>> createListing(
             @RequestBody CreateListingRequest request,
             Authentication authentication
     ) {
+
         String username = authentication.getName();
-        return listingService.createListing(request, username);
+
+        ListingResponse listing = listingService.createListing(request, username);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(true, "Listing created", listing));
     }
 
-//    Update a Listing
+    //    Update a Listing
     @PatchMapping("/{id}")
-    public ListingResponse patchListing(@PathVariable Long id, @RequestBody UpdateListingRequest request) {
-        return listingService.patchListing(id, request);
+    public ResponseEntity<ApiResponse<ListingResponse>> patchListing(
+            @PathVariable Long id,
+            @RequestBody UpdateListingRequest request
+    ) {
+
+        ListingResponse listing = listingService.patchListing(id, request);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(true, "Listing updated", listing)
+        );
     }
 
 
     //    Delete a Listing
     @DeleteMapping("/{id}")
-    public void deleteListing(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteListing(@PathVariable Long id) {
+
         listingService.deleteListing(id);
+
+        return ResponseEntity.noContent().build();
     }
 
 }

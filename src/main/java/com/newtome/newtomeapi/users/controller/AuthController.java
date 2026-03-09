@@ -1,10 +1,12 @@
 package com.newtome.newtomeapi.users.controller;
 
+import com.newtome.newtomeapi.common.ApiResponse;
 import com.newtome.newtomeapi.security.JwtService;
 import com.newtome.newtomeapi.users.dto.LoginRequest;
 import com.newtome.newtomeapi.users.dto.RegisterRequest;
 import com.newtome.newtomeapi.users.model.User;
 import com.newtome.newtomeapi.users.repository.UserRepository;
+import com.newtome.newtomeapi.users.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,13 +27,15 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final UserService userService;
 
     public AuthController(UserRepository userRepository,
                           PasswordEncoder passwordEncoder,
-                          JwtService jwtService) {
+                          JwtService jwtService, UserService userService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.userService = userService;
     }
 
     @GetMapping("/whoami")
@@ -69,38 +73,15 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest req) {
+    public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody RegisterRequest req) {
 
-        String normalizedEmail = req.getEmail().trim().toLowerCase();
-        String normalizedUsername = req.getUsername().trim().toLowerCase();
-
-        if (userRepository.existsByEmail(normalizedEmail)) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(Map.of("message", "Email already in use."));
-        }
-
-        if (userRepository.existsByUsername(normalizedUsername)) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(Map.of("message", "Username already taken."));
-        }
-
-        User user = new User();
-
-        user.setFirstName(req.getFirstName().trim());
-        user.setLastName(req.getLastName().trim());
-        user.setEmail(normalizedEmail);
-        user.setUsername(normalizedUsername);   // ✅ ADD THIS
-        user.setPasswordHash(passwordEncoder.encode(req.getPassword()));
-        user.setPhone(req.getPhone() == null ? null : req.getPhone().trim());
-
-        User saved = userRepository.save(user);
+        User saved = userService.register(req);
 
         return ResponseEntity
                 .created(URI.create("/api/users/" + saved.getId()))
-                .body(Map.of("message", "User registered."));
+                .body(new ApiResponse<>(true, "User registered", null));
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
@@ -125,9 +106,6 @@ public class AuthController {
         // Generate JWT using username as identity
         String token = jwtService.generateToken(user);
 
-        return ResponseEntity.ok(Map.of(
-                "message", "Login ok",
-                "token", token
-        ));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Login ok", Map.of("token", token)));
     }
 }
