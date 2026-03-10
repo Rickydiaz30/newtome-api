@@ -22,20 +22,28 @@ public class ListingController {
         this.listingService = listingService;
     }
 
-//    Get all Listings
+    //    Get all Listings
     @GetMapping
-    public List<ListingResponse> getListings(
+    public ApiResponse<List<ListingResponse>> getListings(
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String color,
             @RequestParam(required = false) String query
     ) {
-        return listingService.search(categoryId, city, color, query);
-    }
+
+    List<ListingResponse> listings =
+            listingService.search(categoryId, city, color, query);
+
+    return new ApiResponse<>(true, "Listings loaded", listings);
+}
 
     @GetMapping("/search")
-    public List<ListingResponse> searchListings(@RequestParam String query) {
-        return listingService.search(null, null, null, query);
+    public ApiResponse<List<ListingResponse>> searchListings(@RequestParam String query) {
+
+        List<ListingResponse> listings =
+                listingService.search(null, null, null, query);
+
+        return new ApiResponse<>(true, "Search results loaded", listings);
     }
 
     //    Get my listings
@@ -79,11 +87,13 @@ public class ListingController {
 
     //    Delete a Listing
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteListing(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteListing(@PathVariable Long id) {
 
         listingService.deleteListing(id);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(
+                new ApiResponse<>(true, "Listing deleted", null)
+        );
     }
 
 }

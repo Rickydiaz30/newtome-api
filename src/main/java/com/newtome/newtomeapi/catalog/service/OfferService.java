@@ -43,7 +43,7 @@ public class OfferService {
 
         // 2️⃣ Listing must be ACTIVE
         if (!"ACTIVE".equals(listing.getStatus())) {
-            throw new IllegalStateException("Cannot make offer on inactive listing.");
+            throw new IllegalStateException("Offers can only be made on active listings.");
         }
 
         // 3️⃣ Find buyer
@@ -58,10 +58,6 @@ public class OfferService {
         // 5️⃣ Validate amount
         if (request.amount() == null || request.amount().signum() <= 0) {
             throw new IllegalArgumentException("Offer amount must be greater than zero.");
-        }
-
-        if (!listing.getStatus().equals("ACTIVE")) {
-            throw new IllegalStateException("Cannot make an offer on a sold listing.");
         }
 
 
@@ -199,13 +195,34 @@ public class OfferService {
 
     public OfferResponse rejectOffer(Long listingId, Long offerId, String email) {
 
-        Offer offer = offerRepository.findById(offerId)
-                .orElseThrow(() -> new RuntimeException("Offer not found"));
+        // 1️⃣ Find listing
+        Listing listing = listingRepository.findById(listingId)
+                .orElseThrow(() -> new IllegalArgumentException("Listing not found"));
 
+        // 2️⃣ Verify user owns the listing
+        if (!listing.getOwner().getUsername().equalsIgnoreCase(email)) {
+            throw new IllegalStateException("You are not the owner of this listing.");
+        }
+
+        // 3️⃣ Find offer
+        Offer offer = offerRepository.findById(offerId)
+                .orElseThrow(() -> new IllegalArgumentException("Offer not found"));
+
+        // 4️⃣ Verify offer belongs to this listing
+        if (!offer.getListing().getId().equals(listingId)) {
+            throw new IllegalStateException("Offer does not belong to this listing.");
+        }
+
+        // 5️⃣ Only allow rejection if still pending
+        if (!"PENDING".equals(offer.getStatus())) {
+            throw new IllegalStateException("Only pending offers can be rejected.");
+        }
+
+        // 6️⃣ Reject offer
         offer.setStatus("REJECTED");
 
-        offerRepository.save(offer);
+        Offer saved = offerRepository.save(offer);
 
-        return toResponse(offer);
+        return toResponse(saved);
     }
 }

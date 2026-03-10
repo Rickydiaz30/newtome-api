@@ -3,6 +3,7 @@ package com.newtome.newtomeapi.catalog.controller;
 import com.newtome.newtomeapi.catalog.dto.CreateOfferRequest;
 import com.newtome.newtomeapi.catalog.dto.OfferResponse;
 import com.newtome.newtomeapi.catalog.service.OfferService;
+import com.newtome.newtomeapi.common.ApiResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,47 +20,57 @@ public class OfferController {
     }
 
     @GetMapping
-    public List<OfferResponse> getOffersForListing(
+    public ApiResponse<List<OfferResponse>> getOffersForListing(
             @PathVariable Long listingId,
             Authentication authentication
     ) {
         String username = authentication.getName();
-        return offerService.getOffersForListing(listingId, username);
+
+        List<OfferResponse> offers =
+                offerService.getOffersForListing(listingId, username);
+
+        return new ApiResponse<>(true, "Offers loaded", offers);
     }
 
-//    @GetMapping("/received")
-//    public List<OfferResponse> getOffersReceived(Authentication authentication) {
-//        String username = authentication.getName();
-//        return offerService.getOffersReceived(username);
-//    }
-
     @PostMapping
-    public OfferResponse createOffer(
+    public ApiResponse<OfferResponse> createOffer(
             @PathVariable Long listingId,
             @RequestBody CreateOfferRequest request,
             Authentication authentication
     ) {
         String buyerEmail = authentication.getName();
-        return offerService.createOffer(listingId, request, buyerEmail);
+
+        OfferResponse offer =
+                offerService.createOffer(listingId, request, buyerEmail);
+
+        return new ApiResponse<>(true, "Offer created", offer);
     }
 
     @PostMapping("/{offerId}/accept")
-    public OfferResponse acceptOffer(
+    public ApiResponse<OfferResponse> acceptOffer(
             @PathVariable Long listingId,
             @PathVariable Long offerId,
             Authentication authentication
     ) {
         String email = authentication.getName();
-        return offerService.acceptOffer(listingId, offerId, email);
+
+        OfferResponse offer =
+                offerService.acceptOffer(listingId, offerId, email);
+
+        return new ApiResponse<>(true, "Offer accepted", offer);
     }
 
     @PostMapping("/{offerId}/reject")
-    public OfferResponse rejectOffer(
+    public ApiResponse<OfferResponse> rejectOffer(
             @PathVariable Long listingId,
             @PathVariable Long offerId,
             Authentication authentication
     ) {
         String email = authentication.getName();
-        return offerService.rejectOffer(listingId, offerId, email);
+
+        OfferResponse offer =
+                offerService.rejectOffer(listingId, offerId, email);
+
+        return new ApiResponse<>(true, "Offer rejected", offer);
     }
 }
