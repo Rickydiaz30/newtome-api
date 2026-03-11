@@ -6,5 +6,9 @@ public record UserMeResponse(
         String lastName,
         String username,
         String email,
-        String phone
+        String phone,
+        String streetAddress,
+        String city,
+        String state,
+        String zipCode
 ) {}

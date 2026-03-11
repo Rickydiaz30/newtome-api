@@ -33,20 +33,44 @@ public class User {
     @Column(length = 30)
     private String phone;
 
-    // Constructors
+    @Column(length = 200)
+    private String streetAddress;
+
+    @Column(length = 120)
+    private String city;
+
+    @Column(length = 50)
+    private String state;
+
+    @Column(length = 20)
+    private String zipCode;
+
     public User() {}
 
-    public User(String firstName, String lastName, String userName, String email, String passwordHash, String phone) {
-
+    public User(
+            String firstName,
+            String lastName,
+            String userName,
+            String email,
+            String passwordHash,
+            String phone,
+            String streetAddress,
+            String city,
+            String state,
+            String zipCode
+    ) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = userName;
         this.email = email;
         this.passwordHash = passwordHash;
         this.phone = phone;
+        this.streetAddress = streetAddress;
+        this.city = city;
+        this.state = state;
+        this.zipCode = zipCode;
     }
 
-    // Getters/Setters
     public Long getId() { return id; }
 
     public String getFirstName() { return firstName; }
@@ -66,4 +90,16 @@ public class User {
 
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+
+    public String getStreetAddress() { return streetAddress; }
+    public void setStreetAddress(String streetAddress) { this.streetAddress = streetAddress; }
+
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
+
+    public String getState() { return state; }
+    public void setState(String state) { this.state = state; }
+
+    public String getZipCode() { return zipCode; }
+    public void setZipCode(String zipCode) { this.zipCode = zipCode; }
 }

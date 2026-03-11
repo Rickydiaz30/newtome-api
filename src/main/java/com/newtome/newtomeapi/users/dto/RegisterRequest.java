@@ -30,11 +30,35 @@ public class RegisterRequest {
     @Size(max = 30)
     private String phone;
 
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+    @Size(max = 255)
+    private String streetAddress;
 
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
+    @Size(max = 120)
+    private String city;
+
+    @Size(max = 50)
+    private String state;
+
+    @Size(max = 10)
+    private String zipCode;
+
+    // getters + setters...
+
+    public @NotBlank @Size(max = 120) String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(@NotBlank @Size(max = 120) String firstName) {
+        this.firstName = firstName;
+    }
+
+    public @NotBlank @Size(max = 120) String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(@NotBlank @Size(max = 120) String lastName) {
+        this.lastName = lastName;
+    }
 
     public @NotBlank @Size(min = 3, max = 30) String getUsername() {
         return username;
@@ -44,12 +68,59 @@ public class RegisterRequest {
         this.username = username;
     }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public @NotBlank @Email @Size(max = 190) String getEmail() {
+        return email;
+    }
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public void setEmail(@NotBlank @Email @Size(max = 190) String email) {
+        this.email = email;
+    }
 
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
+    public @NotBlank @Size(min = 8, max = 72) String getPassword() {
+        return password;
+    }
+
+    public void setPassword(@NotBlank @Size(min = 8, max = 72) String password) {
+        this.password = password;
+    }
+
+    public @Size(max = 30) String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(@Size(max = 30) String phone) {
+        this.phone = phone;
+    }
+
+    public @Size(max = 255) String getStreetAddress() {
+        return streetAddress;
+    }
+
+    public void setStreetAddress(@Size(max = 255) String streetAddress) {
+        this.streetAddress = streetAddress;
+    }
+
+    public @Size(max = 120) String getCity() {
+        return city;
+    }
+
+    public void setCity(@Size(max = 120) String city) {
+        this.city = city;
+    }
+
+    public @Size(max = 50) String getState() {
+        return state;
+    }
+
+    public void setState(@Size(max = 50) String state) {
+        this.state = state;
+    }
+
+    public @Size(max = 10) String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(@Size(max = 10) String zipCode) {
+        this.zipCode = zipCode;
+    }
 }
