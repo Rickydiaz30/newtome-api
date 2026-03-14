@@ -14,12 +14,14 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200")
+                        .allowedOrigins(
+                                "http://localhost:4200",
+                                "https://dxsg03couz5uo.cloudfront.net",
+                                "https://d2jpnob25ggyc0.cloudfront.net"
+                        )
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*");
-                // .allowCredentials(true); // only if you later use cookies/auth sessions
             }
         };
     }
 }
-

@@ -31,6 +31,7 @@ public class OfferService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public OfferResponse createOffer(
             Long listingId,
             CreateOfferRequest request,
@@ -90,6 +91,7 @@ public class OfferService {
         );
     }
 
+    @Transactional(readOnly = true)
     public List<OfferResponse> getOffersForListing(Long listingId, String username) {
 
         Listing listing = listingRepository.findById(listingId)
@@ -145,7 +147,7 @@ public class OfferService {
     }
 
 
-
+    @Transactional(readOnly = true)
     public List<OfferResponse> getMyOffers(String username) {
 
         var user = userRepository.findByUsernameIgnoreCase(username)
@@ -158,7 +160,7 @@ public class OfferService {
     }
 
 
-
+    @Transactional
     public OfferResponse cancelOffer(Long offerId, String username) {
 
         var offer = offerRepository.findById(offerId)
@@ -182,6 +184,7 @@ public class OfferService {
         return toResponse(saved);
     }
 
+    @Transactional(readOnly = true)
     public List<OfferResponse> getOffersReceived(String username) {
         User user = userRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -193,6 +196,7 @@ public class OfferService {
                 .toList();
     }
 
+    @Transactional
     public OfferResponse rejectOffer(Long listingId, Long offerId, String email) {
 
         // 1️⃣ Find listing

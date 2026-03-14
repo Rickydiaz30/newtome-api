@@ -29,24 +29,13 @@ public class ListingService {
         this.userRepository = userRepository;
     }
 
-    public List<ListingResponse> search(Long categoryId, String city, String color, String query) {
+    public List<ListingResponse> search(String query) {
 
         List<Listing> listings;
 
-        if (categoryId != null) {
-            listings = listingRepository.findByCategoryIdOrderByCreatedAtDesc(categoryId);
-        }
-        else if (city != null && !city.isBlank()) {
-            listings = listingRepository.findByCityIgnoreCaseOrderByCreatedAtDesc(city);
-        }
-        else if (color != null && !color.isBlank()) {
-            listings = listingRepository.findByColorIgnoreCaseOrderByCreatedAtDesc(color);
-        }
-        else if (query != null && !query.isBlank()) {
-            listings = listingRepository
-                    .findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByCreatedAtDesc(query, query);
-        }
-        else {
+        if (query != null && !query.isBlank()) {
+            listings = listingRepository.searchMarketplaceListings(query);
+        } else {
             listings = listingRepository.findMarketplaceListings();
         }
 

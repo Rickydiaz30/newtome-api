@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: newtome-api
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8081
+
+app:
+  jwt:
+    exp-minutes: 60

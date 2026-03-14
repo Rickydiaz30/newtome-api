@@ -24,29 +24,19 @@ public class ListingController {
 
     //    Get all Listings
     @GetMapping
-    public ApiResponse<List<ListingResponse>> getListings(
-            @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) String city,
-            @RequestParam(required = false) String color,
-            @RequestParam(required = false) String query
-    ) {
-
-    List<ListingResponse> listings =
-            listingService.search(categoryId, city, color, query);
-
-    return new ApiResponse<>(true, "Listings loaded", listings);
-}
-
-    @GetMapping("/search")
-    public ApiResponse<List<ListingResponse>> searchListings(@RequestParam String query) {
-
-        List<ListingResponse> listings =
-                listingService.search(null, null, null, query);
-
-        return new ApiResponse<>(true, "Search results loaded", listings);
+    public ApiResponse<List<ListingResponse>> getListings() {
+        List<ListingResponse> listings = listingService.search(null);
+        return new ApiResponse<>(true, "Listings loaded", listings);
     }
 
-    //    Get my listings
+    @GetMapping("/search")
+    public ApiResponse<List<ListingResponse>> searchListings(
+            @RequestParam String query
+    ) {
+        List<ListingResponse> listings = listingService.search(query);
+        return new ApiResponse<>(true, "Listings loaded", listings);
+    }
+
     @GetMapping("/mine")
     public ApiResponse<List<ListingResponse>> getMyListings(Authentication authentication) {
         String username = authentication.getName();

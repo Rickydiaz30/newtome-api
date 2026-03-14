@@ -21,6 +21,7 @@ public class Listing {
     private String city;
     private String status;
     private Instant createdAt;
+    @Column(columnDefinition = "TEXT")
     private String imageUrl;
 
     @ManyToOne
