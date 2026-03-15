@@ -7,6 +7,7 @@ import com.newtome.newtomeapi.users.dto.RegisterRequest;
 import com.newtome.newtomeapi.users.model.User;
 import com.newtome.newtomeapi.users.repository.UserRepository;
 import com.newtome.newtomeapi.users.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,6 +84,7 @@ public class AuthController {
     }
 
 
+    @Operation(summary = "User login")
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
 

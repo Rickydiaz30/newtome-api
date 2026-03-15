@@ -20,7 +20,8 @@ public class CorsConfig {
                                 "https://d2jpnob25ggyc0.cloudfront.net"
                         )
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-                        .allowedHeaders("*");
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }
