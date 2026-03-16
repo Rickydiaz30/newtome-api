@@ -31,3 +31,33 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment / Secrets ###
+.env
+.env.*
+*.env
+application-local.yml
+application-local.properties
+
+### AWS ###
+.aws/
+credentials
+
+### Logs ###
+*.log
+logs/
+
+### OS Files ###
+.DS_Store
+Thumbs.db
+
+### Node (if you ever add frontend here) ###
+node_modules/
+
+### Docker ###
+docker-compose.override.yml
+
+### Build artifacts ###
+*.jar
+*.war
+*.ear
