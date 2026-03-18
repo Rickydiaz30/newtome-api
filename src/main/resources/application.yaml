@@ -1,6 +1,11 @@
 spring:
   application:
     name: newtome-api
+<<<<<<< HEAD
+=======
+  profiles:
+    active: dev
+>>>>>>> develop
 
   jpa:
     open-in-view: false
@@ -12,6 +17,7 @@ server:
 
 app:
   jwt:
+<<<<<<< HEAD
     exp-minutes: 60
     secret: ${JWT_SECRET}
 
@@ -21,3 +27,6 @@ aws:
 
 cdn:
   image-url: https://d3qyvu5wcarbxw.cloudfront.net
+=======
+    exp-minutes: 60
+>>>>>>> develop

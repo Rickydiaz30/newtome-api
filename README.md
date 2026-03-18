@@ -1,7 +1,10 @@
 # Newtome 🛒
 
+<<<<<<< HEAD
 [Live App](https://dxsg03couz5uo.cloudfront.net)
 
+=======
+>>>>>>> develop
 Newtome is a full-stack web application designed to support user accounts, listings, and catalog management with secure authentication and scalable backend architecture.
 
 It highlights advanced backend development concepts using Spring Boot, including JWT-based security, layered architecture, and modular domain design.

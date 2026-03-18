@@ -39,6 +39,7 @@ build/
 application-local.yml
 application-local.properties
 
+<<<<<<< HEAD
 # Spring Profiles (extra safety)
 application-dev.yml
 application-dev.properties
@@ -64,6 +65,8 @@ coverage/
 data/
 mysql-data/
 
+=======
+>>>>>>> develop
 ### AWS ###
 .aws/
 credentials
