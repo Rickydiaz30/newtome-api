@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: newtome-api
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8081
+
+app:
+  jwt:
+    exp-minutes: 60
+    secret: ${JWT_SECRET}
+
+aws:
+  s3:
+    bucket: newtome-images-115944781330-us-east-1-an
+
+cdn:
+  image-url: https://d3qyvu5wcarbxw.cloudfront.net
