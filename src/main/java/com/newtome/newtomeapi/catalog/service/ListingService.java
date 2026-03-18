@@ -131,6 +131,19 @@ public class ListingService {
     }
 
     private ListingResponse toResponse(Listing listing) {
+
+        String cdnBase = "https://d3qyvu5wcarbxw.cloudfront.net";
+
+        String imageUrl = listing.getImageUrl();
+
+        if (imageUrl != null && imageUrl.contains("amazonaws.com")) {
+            imageUrl = imageUrl.replace(
+                    "https://newtome-images-115944781330-us-east-1-an.s3.amazonaws.com/",
+                    ""
+            );
+            imageUrl = cdnBase + "/" + imageUrl;
+        }
+
         return new ListingResponse(
                 listing.getId(),
                 listing.getTitle(),
@@ -140,14 +153,13 @@ public class ListingService {
                 listing.getCity(),
                 listing.getStatus(),
                 listing.getCreatedAt(),
-                listing.getImageUrl(),
+                imageUrl, // ✅ FIXED HERE
                 listing.getCategory().getId(),
                 listing.getCategory().getName(),
                 listing.getOwner().getId(),
                 listing.getOwner().getFirstName()
         );
     }
-
     private String capitalizeCity(String city) {
         if (city == null || city.isBlank()) return city;
         return city.substring(0,1).toUpperCase() + city.substring(1).toLowerCase();
