@@ -53,6 +53,7 @@ public class ListingService {
 
 
 //    Update a Listing with Patch
+    @Transactional
     public ListingResponse patchListing(Long listingId, UpdateListingRequest request) {
         Listing listing = listingRepository.findById(listingId)
                 .orElseThrow(() -> new IllegalArgumentException("Listing not found: " + listingId));
@@ -89,6 +90,7 @@ public class ListingService {
     }
 
     // Get my listings
+    @Transactional
     public List<ListingResponse> getMyListings(String username) {
 
         var user = userRepository.findByUsernameIgnoreCase(username)
@@ -110,6 +112,7 @@ public class ListingService {
     }
 
     // Create a listing
+    @Transactional
     public ListingResponse createListing(CreateListingRequest request, String username) {
 
         Category category = categoryRepository.findById(request.categoryId())
