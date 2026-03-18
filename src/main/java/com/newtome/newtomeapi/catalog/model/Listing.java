@@ -5,10 +5,10 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-<<<<<<< HEAD
-=======
+
+
 import java.util.ArrayList;
->>>>>>> develop
+
 import java.util.List;
 
 @Entity
@@ -28,12 +28,11 @@ public class Listing {
     @Column(columnDefinition = "TEXT")
     private String imageUrl;
 
-<<<<<<< HEAD
-=======
+
     @OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ListingImage> images = new ArrayList<>();
 
->>>>>>> develop
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
@@ -147,8 +146,7 @@ public class Listing {
         this.owner = owner;
     }
 
-<<<<<<< HEAD
-=======
+
     public void addImage(ListingImage image) {
         images.add(image);
         image.setListing(this);
@@ -167,7 +165,7 @@ public class Listing {
         this.images = images;
     }
 
->>>>>>> develop
+
     @Override
     public String toString() {
         return "Listing{" +

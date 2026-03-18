@@ -5,23 +5,15 @@ import com.newtome.newtomeapi.catalog.dto.ListingResponse;
 import com.newtome.newtomeapi.catalog.dto.UpdateListingRequest;
 import com.newtome.newtomeapi.catalog.model.Category;
 import com.newtome.newtomeapi.catalog.model.Listing;
-<<<<<<< HEAD
-=======
 import com.newtome.newtomeapi.catalog.model.ListingImage;
->>>>>>> develop
 import com.newtome.newtomeapi.catalog.repository.CategoryRepository;
 import com.newtome.newtomeapi.catalog.repository.ListingRepository;
 import com.newtome.newtomeapi.users.repository.UserRepository;
 import org.springframework.stereotype.Service;
-<<<<<<< HEAD
-
-import java.time.Instant;
-=======
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
->>>>>>> develop
 import java.util.List;
 
 @Service
@@ -40,10 +32,9 @@ public class ListingService {
         this.userRepository = userRepository;
     }
 
-<<<<<<< HEAD
-=======
+
+
     @Transactional
->>>>>>> develop
     public List<ListingResponse> search(String query) {
 
         List<Listing> listings;
@@ -136,10 +127,10 @@ public class ListingService {
         listing.setCity(capitalizeCity(request.city()));
         listing.setStatus("ACTIVE");
         listing.setCreatedAt(Instant.now());
-<<<<<<< HEAD
-        listing.setImageUrl(request.imageUrl());
-=======
-        listing.setImageUrl(request.imageUrl()); // keep first image as fallback
+
+        if (request.imageUrls() != null && !request.imageUrls().isEmpty()) {
+            listing.setImageUrl(request.imageUrls().get(0)); // fallback
+        }
 
         if (request.imageUrls() != null) {
             for (String url : request.imageUrls()) {
@@ -150,7 +141,7 @@ public class ListingService {
                 listing.getImages().add(image);
             }
         }
->>>>>>> develop
+
         listing.setCategory(category);
 
         listing.setOwner(user);
@@ -160,11 +151,6 @@ public class ListingService {
     }
 
     private ListingResponse toResponse(Listing listing) {
-<<<<<<< HEAD
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> develop
 
         String cdnBase = "https://d3qyvu5wcarbxw.cloudfront.net";
 
@@ -178,8 +164,6 @@ public class ListingService {
             imageUrl = cdnBase + "/" + imageUrl;
         }
 
-<<<<<<< HEAD
-=======
         List<String> imageUrls = new ArrayList<>();
 
         for (ListingImage img : listing.getImages()) {
@@ -192,11 +176,10 @@ public class ListingService {
                 );
                 url = cdnBase + "/" + url;
             }
+
             imageUrls.add(url);
         }
 
->>>>>>> Stashed changes
->>>>>>> develop
         return new ListingResponse(
                 listing.getId(),
                 listing.getTitle(),
@@ -206,30 +189,16 @@ public class ListingService {
                 listing.getCity(),
                 listing.getStatus(),
                 listing.getCreatedAt(),
-<<<<<<< HEAD
-                imageUrl, // ✅ FIXED HERE
-=======
-<<<<<<< Updated upstream
-                listing.getImageUrl(),
-=======
                 imageUrl,
-                imageUrls, // 👈 THIS WAS MISSING
->>>>>>> Stashed changes
->>>>>>> develop
+                imageUrls, // 👈 REQUIRED FOR CAROUSEL
                 listing.getCategory().getId(),
                 listing.getCategory().getName(),
                 listing.getOwner().getId(),
                 listing.getOwner().getFirstName()
         );
     }
-<<<<<<< HEAD
-=======
 
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
->>>>>>> develop
     private String capitalizeCity(String city) {
         if (city == null || city.isBlank()) return city;
         return city.substring(0,1).toUpperCase() + city.substring(1).toLowerCase();
