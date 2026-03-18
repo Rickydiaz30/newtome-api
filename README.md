@@ -1,6 +1,6 @@
 # Newtome 🛒
 
-dxsg03couz5uo.cloudfront.net
+[Live App](https://dxsg03couz5uo.cloudfront.net)
 
 Newtome is a full-stack web application designed to support user accounts, listings, and catalog management with secure authentication and scalable backend architecture.
 
