@@ -1,6 +1,7 @@
 package com.newtome.newtomeapi.catalog.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public record CreateListingRequest(
         String title,
@@ -9,5 +10,6 @@ public record CreateListingRequest(
         BigDecimal price,
         String city,
         Long categoryId,
-        String imageUrl
+        String imageUrl,
+        List<String> imageUrls
 ) {}

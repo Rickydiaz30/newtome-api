@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,6 +24,9 @@ public class Listing {
     private Instant createdAt;
     @Column(columnDefinition = "TEXT")
     private String imageUrl;
+
+    @OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ListingImage> images = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -135,6 +139,24 @@ public class Listing {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    public void addImage(ListingImage image) {
+        images.add(image);
+        image.setListing(this);
+    }
+
+    public void removeImage(ListingImage image) {
+        images.remove(image);
+        image.setListing(null);
+    }
+
+    public List<ListingImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<ListingImage> images) {
+        this.images = images;
     }
 
     @Override
