@@ -16,9 +16,7 @@ public record ListingResponse(
         String status,
         Instant createdAt,
         String imageUrl,
-
         List<String> imageUrls,
-
         Long categoryId,
         String categoryName,
         Long ownerId,

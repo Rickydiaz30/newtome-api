@@ -38,10 +38,10 @@ public class OfferController {
             @RequestBody CreateOfferRequest request,
             Authentication authentication
     ) {
-        String buyerEmail = authentication.getName();
+        String username = authentication.getName();
 
         OfferResponse offer =
-                offerService.createOffer(listingId, request, buyerEmail);
+                offerService.createOffer(listingId, request, username);
 
         return new ApiResponse<>(true, "Offer created", offer);
     }

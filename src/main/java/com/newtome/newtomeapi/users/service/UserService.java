@@ -42,7 +42,6 @@ public class UserService {
         user.setUsername(normalizedUsername);
         user.setPasswordHash(passwordEncoder.encode(req.getPassword()));
         user.setPhone(req.getPhone() == null ? null : req.getPhone().trim());
-
         user.setStreetAddress(req.getStreetAddress() == null ? null : req.getStreetAddress().trim());
         user.setCity(req.getCity() == null ? null : req.getCity().trim());
         user.setState(req.getState() == null ? null : req.getState().trim().toUpperCase());
