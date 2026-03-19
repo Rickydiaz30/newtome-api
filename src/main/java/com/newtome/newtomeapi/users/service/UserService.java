@@ -46,6 +46,7 @@ public class UserService {
         user.setCity(req.getCity() == null ? null : req.getCity().trim());
         user.setState(req.getState() == null ? null : req.getState().trim().toUpperCase());
         user.setZipCode(req.getZipCode() == null ? null : req.getZipCode().trim());
+        user.setRole("ROLE_USER");
 
         return userRepository.save(user);
     }
@@ -88,3 +89,4 @@ public class UserService {
         return userRepository.save(user);
     }
 }
+
