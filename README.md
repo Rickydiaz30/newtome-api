@@ -2,123 +2,166 @@
 
 [Live App](https://dxsg03couz5uo.cloudfront.net)
 
-Newtome is a full-stack web application designed to support user accounts, listings, and catalog management with secure authentication and scalable backend architecture.
-
-It highlights advanced backend development concepts using Spring Boot, including JWT-based security, database migration management, and production-ready deployment practices.
+Newtome is a full-stack marketplace application that enables users to create accounts, list items, and interact through an offer-based system.
+The project emphasizes **secure backend design, scalable architecture, and real-world cloud deployment** using AWS and Docker.
 
 ---
 
 ## 🔧 Tech Stack
 
-* **Frontend:** Angular (Standalone Components, Routing, Services)
-* **Backend:** Java 21, Spring Boot (REST API)
-* **Security:** JWT Authentication (custom filter + token service)
-* **Database:** MySQL (Dockerized)
-* **Database Migrations:** Flyway
-* **Cloud & Deployment:**
+### Frontend
 
-  * AWS S3 (image storage)
-  * AWS CloudFront (CDN)
-  * Docker (containerized backend + DB)
-* **Tools:** Postman, Git, IntelliJ, VS Code
+* Angular (Standalone Components, Routing, Services)
+
+### Backend
+
+* Java 21
+* Spring Boot (REST API)
+* Spring Data JPA
+
+### Security
+
+* JWT Authentication (custom filter + token service)
+
+### Database
+
+* MySQL (Dockerized)
+* Flyway (database version control)
+
+### Cloud & Deployment
+
+* AWS EC2 (backend hosting)
+* AWS S3 (static frontend + image storage)
+* AWS CloudFront (CDN + API routing)
+* Docker & Docker Compose (containerization)
+
+### Tools
+
+* Postman
+* Git / GitHub
+* IntelliJ / VS Code
 
 ---
 
 ## 🧱 Architecture Overview
 
-The backend follows a **layered architecture** to ensure maintainability and scalability:
+The backend follows a **layered architecture** for scalability and maintainability:
 
-* **Controller Layer** → Handles HTTP requests and responses
-* **Service Layer** → Contains business logic
-* **Repository Layer** → Manages database interactions
-* **DTOs & Mappers** → Separates internal models from API contracts
+* **Controller Layer** → Handles HTTP requests/responses
+* **Service Layer** → Business logic
+* **Repository Layer** → Database access (JPA)
+* **DTOs & Mappers** → Clean API contracts
 
 ### 📂 Core Modules
 
 * **Users** → Authentication and account management
-* **Catalog** → Listing structure and organization
+* **Catalog** → Listings and categories
 * **Offers** → Buyer/seller offer workflow
-* **Uploads** → File handling via AWS S3
+* **Uploads** → Image handling via S3
 * **Security** → JWT authentication and request filtering
 
 ---
 
 ## 🔐 Security Implementation
 
-* Implemented **JWT-based authentication** using:
+* Implemented **JWT-based authentication**
 
   * Custom `JwtAuthFilter`
-  * Token generation and validation service
-* Secured API endpoints so only authenticated users can access protected resources
-* Configured CORS for safe frontend-backend communication
+  * Token generation & validation service
+* Protected API endpoints (authenticated access only)
+* Configured CORS for frontend-backend communication
 
 ---
 
 ## 🗄️ Database & Migrations (Flyway)
 
-The application uses **Flyway** to manage database schema changes in a safe and version-controlled way.
+The application uses **Flyway** to manage schema evolution in a production-safe way.
 
-* Existing production schema was **baselined** into Flyway
-* All schema changes are tracked via versioned migration files:
+### Migration Strategy
 
-  * `V1__initial_schema.sql`
-  * `V2__add_last_login_to_users.sql`
+* Existing schema was **baselined into Flyway**
+* All changes are version-controlled:
+
+```
+V1__initial_schema.sql
+V2__add_last_login_to_users.sql
+```
+
 * Migrations run automatically on application startup
 
-### ✅ Benefits
+### Benefits
 
-* Prevents accidental schema drift
-* Ensures consistent environments (dev, staging, production)
-* Enables safe, incremental database evolution
+* Prevents schema drift across environments
+* Enables safe incremental database updates
+* Ensures consistency between development and production
 
 ---
 
 ## 📦 Features
 
 * User registration and authentication
-* Secure login with token-based authorization
-* RESTful APIs for listings and catalog management
-* File upload functionality using AWS S3
-* CDN-backed image delivery via CloudFront
-* Modular backend structure for scalability
+* Secure login with JWT-based authorization
+* CRUD operations for listings and categories
+* Offer-based marketplace workflow
+* Image upload system backed by S3
+* CDN delivery for frontend and images
 
 ---
 
 ## 💰 Offer System
 
-A key feature of Newtome is its **offer-based marketplace workflow**:
+Newtome implements a **real-world marketplace interaction model**:
 
-* Users can submit offers on listings
-* Sellers can review and **accept or reject offers**
-* Backend handles **offer state transitions**
-* Implements real-world buyer/seller interaction logic beyond CRUD
+* Users submit offers on listings
+* Sellers can accept or reject offers
+* Backend manages offer states and relationships
+* Enforces buyer/seller interaction rules beyond basic CRUD
 
 ---
 
-## ☁️ Deployment
+## ☁️ Deployment Architecture
 
-The application is deployed using a **containerized architecture**:
+The application is deployed using a **containerized AWS architecture**:
 
-* Backend runs in a Docker container
-* MySQL runs in a separate Docker container
-* Frontend is hosted via AWS and served through CloudFront
+### Backend & Database
 
-### Key Highlights
+* Backend API runs in a Docker container on an EC2 instance
+* MySQL runs in a separate Docker container using Docker Compose
 
-* Environment-based configuration using Spring profiles
-* Secure handling of secrets via environment variables
-* Scalable infrastructure using AWS services
+### Frontend & Assets
+
+* Angular frontend is hosted in an S3 bucket
+* User-uploaded images are stored in S3
+
+### Content Delivery (CloudFront)
+
+CloudFront is used as a **global CDN and routing layer**:
+
+* Serves frontend globally with low latency
+* Delivers images via CDN
+* Routes API requests to the EC2 backend
+
+---
+
+## 🧩 Infrastructure Summary
+
+```
+Frontend  → S3 → CloudFront
+Images    → S3 → CloudFront
+API       → EC2 (Docker) → CloudFront
+Database  → MySQL (Docker on EC2)
+```
 
 ---
 
 ## 🚀 Key Learning Outcomes
 
-* Designed and implemented secure REST APIs using Spring Boot
-* Applied **JWT authentication and request filtering**
+* Built secure REST APIs using Spring Boot
+* Implemented **JWT authentication and request filtering**
 * Introduced **Flyway for database version control**
-* Built scalable backend systems using **layered architecture**
-* Integrated Angular frontend with RESTful backend
-* Deployed a full-stack application using **Docker and AWS**
+* Designed scalable systems using **layered architecture**
+* Deployed a full-stack app using **Docker and AWS**
+* Integrated frontend and backend using real API workflows
 
 ---
 
@@ -128,7 +171,7 @@ The application is deployed using a **containerized architecture**:
 * Pagination and filtering for listings
 * CI/CD pipeline (GitHub Actions or AWS)
 * MongoDB integration for flexible data models
-* Improved frontend state management (NgRx or Signals)
+* Improved frontend state management (NgRx / Signals)
 
 ---
 
