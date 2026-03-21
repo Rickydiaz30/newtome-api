@@ -1,42 +1,32 @@
 package com.newtome.newtomeapi.users.controller;
 
 import com.newtome.newtomeapi.common.ApiResponse;
-import com.newtome.newtomeapi.security.JwtService;
 import com.newtome.newtomeapi.users.dto.LoginRequest;
 import com.newtome.newtomeapi.users.dto.RegisterRequest;
 import com.newtome.newtomeapi.users.model.User;
-import com.newtome.newtomeapi.users.repository.UserRepository;
+import com.newtome.newtomeapi.users.service.AuthService;
 import com.newtome.newtomeapi.users.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final UserService userService;
 
-    public AuthController(UserRepository userRepository,
-                          PasswordEncoder passwordEncoder,
-                          JwtService jwtService, UserService userService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
+    private final UserService userService;
+    private final AuthService authService;
+
+    public AuthController(UserService userService, AuthService authService) {
+
         this.userService = userService;
+        this.authService = authService;
     }
 
     @GetMapping("/whoami")
@@ -72,6 +62,11 @@ public class AuthController {
         return ResponseEntity.ok(body);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
+        return ResponseEntity.ok(authService.login(req));
+    }
+
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody RegisterRequest req) {
@@ -84,30 +79,5 @@ public class AuthController {
     }
 
 
-    @Operation(summary = "User login")
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
 
-        String normalizedUsername = req.getUsername().trim().toLowerCase();
-
-        User user = userRepository
-                .findByUsernameIgnoreCase(normalizedUsername)
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials")
-                );
-
-        boolean matches = passwordEncoder.matches(
-                req.getPassword(),
-                user.getPasswordHash()
-        );
-
-        if (!matches) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
-        }
-
-        // Generate JWT using username as identity
-        String token = jwtService.generateToken(user);
-
-        return ResponseEntity.ok(new ApiResponse<>(true, "Login ok", Map.of("token", token)));
-    }
 }
