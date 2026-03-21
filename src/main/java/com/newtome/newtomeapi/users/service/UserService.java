@@ -9,6 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+
 @Service
 public class UserService {
 
@@ -47,6 +49,7 @@ public class UserService {
         user.setState(req.getState() == null ? null : req.getState().trim().toUpperCase());
         user.setZipCode(req.getZipCode() == null ? null : req.getZipCode().trim());
         user.setRole("ROLE_USER");
+        user.setCreatedAt(LocalDateTime.now());
 
         return userRepository.save(user);
     }
