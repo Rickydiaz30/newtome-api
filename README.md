@@ -3,7 +3,7 @@
 [Live App](https://dxsg03couz5uo.cloudfront.net)
 
 Newtome is a full-stack marketplace application that enables users to create accounts, list items, and interact through an offer-based system.
-The project emphasizes **secure backend design, scalable architecture, and real-world cloud deployment** using AWS and Docker.
+The project emphasizes **secure backend design, scalable architecture, production-safe database management, and automated testing practices** using AWS, Docker, and Spring Boot.
 
 ---
 
@@ -28,6 +28,12 @@ The project emphasizes **secure backend design, scalable architecture, and real-
 * MySQL (Dockerized)
 * Flyway (database version control)
 
+### Testing
+
+* JUnit 5
+* Mockito (unit testing)
+* Spring Boot Integration Testing (MockMvc + real DB)
+
 ### Cloud & Deployment
 
 * AWS EC2 (backend hosting)
@@ -38,7 +44,7 @@ The project emphasizes **secure backend design, scalable architecture, and real-
 ### Tools
 
 * Postman
-* Git / GitHub
+* Git / GitHub (PR-based workflow)
 * IntelliJ / VS Code
 
 ---
@@ -68,6 +74,7 @@ The backend follows a **layered architecture** for scalability and maintainabili
 
   * Custom `JwtAuthFilter`
   * Token generation & validation service
+* Secure password storage using **BCrypt hashing**
 * Protected API endpoints (authenticated access only)
 * Configured CORS for frontend-backend communication
 
@@ -85,6 +92,9 @@ The application uses **Flyway** to manage schema evolution in a production-safe 
 ```
 V1__initial_schema.sql
 V2__add_last_login_to_users.sql
+V3__add_created_at_column.sql
+V4__backfill_created_at.sql
+V5__make_created_at_not_null.sql
 ```
 
 * Migrations run automatically on application startup
@@ -94,6 +104,39 @@ V2__add_last_login_to_users.sql
 * Prevents schema drift across environments
 * Enables safe incremental database updates
 * Ensures consistency between development and production
+
+---
+
+## 🧪 Testing Strategy
+
+The backend includes both **unit and integration testing** to ensure reliability:
+
+### Unit Testing
+
+* Service-layer testing using **Mockito**
+* Covers authentication logic (success + failure scenarios)
+
+### Integration Testing
+
+* End-to-end API testing using **MockMvc**
+* Runs against a **real MySQL test database (Docker)**
+* Verifies:
+
+  * Authentication flow
+  * JWT generation
+  * Database updates (e.g., `last_login_at`)
+* Uses **isolated test database (`newtome_test`)** to prevent data loss
+* Handles relational cleanup in correct order:
+
+  ```
+  offers → listings → users
+  ```
+
+### Why This Matters
+
+* Ensures real system behavior (not just mocked logic)
+* Prevents regressions during development
+* Reflects production-like conditions
 
 ---
 
@@ -160,16 +203,22 @@ Database  → MySQL (Docker on EC2)
 * Implemented **JWT authentication and request filtering**
 * Introduced **Flyway for database version control**
 * Designed scalable systems using **layered architecture**
+* Implemented **integration testing with real database**
+* Solved real-world issues like:
+
+  * Test data isolation
+  * Foreign key constraint handling
+  * Environment-based configuration
 * Deployed a full-stack app using **Docker and AWS**
-* Integrated frontend and backend using real API workflows
+* Applied **professional Git workflow (feature branches + PRs)**
 
 ---
 
 ## 🔮 Future Enhancements
 
+* CI/CD pipeline (GitHub Actions) ← next step
 * Role-based authorization (Admin/User roles)
 * Pagination and filtering for listings
-* CI/CD pipeline (GitHub Actions or AWS)
 * MongoDB integration for flexible data models
 * Improved frontend state management (NgRx / Signals)
 
