@@ -1,0 +1,2 @@
+ALTER TABLE users
+    MODIFY created_at DATETIME NOT NULL;
